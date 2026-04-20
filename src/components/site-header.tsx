@@ -8,6 +8,28 @@ import { usePathname } from "next/navigation";
 
 import { mainNavigation } from "@/data/site-content";
 
+type TickerItem = {
+  label: string;
+  href?: string;
+  value?: string;
+};
+
+const tickerItems: TickerItem[] = [
+  {
+    label: "Baumpflege, Spezialfaellung und Maschinenpower im Ruhrgebiet",
+  },
+  {
+    label: "Notfall Kirchhellen",
+    href: "tel:+4920459639700",
+    value: "+49 (0) 20 45 96 3 97 00",
+  },
+  {
+    label: "Notfall Castrop",
+    href: "tel:+4923059298666",
+    value: "+49 (0) 23 05 92 9 86 66",
+  },
+];
+
 function matchesPath(pathname: string, href: string) {
   if (href === "/") {
     return pathname === "/";
@@ -171,10 +193,20 @@ export function SiteHeader() {
 
           <div className="site-ticker" aria-label="Unternehmenshinweis">
             <div className="site-ticker__track">
-              <span>Baumpflege, Spezialfaellung und Maschinenpower im Ruhrgebiet</span>
-              <span aria-hidden="true">
-                Baumpflege, Spezialfaellung und Maschinenpower im Ruhrgebiet
-              </span>
+              {[...tickerItems, ...tickerItems].map((item, index) => (
+                <span aria-hidden={index >= tickerItems.length} key={`${item.label}-${index}`}>
+                  {item.href ? (
+                    <>
+                      <strong>{item.label}:</strong>{" "}
+                      <a className="site-ticker__link" href={item.href}>
+                        {item.value}
+                      </a>
+                    </>
+                  ) : (
+                    item.label
+                  )}
+                </span>
+              ))}
             </div>
           </div>
 

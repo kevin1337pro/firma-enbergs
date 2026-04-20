@@ -96,10 +96,10 @@ export default function MachinesPage() {
                 loop
                 muted
                 playsInline
-                poster="/assets/img-8366-poster.png"
+                poster="/assets/baumansicht-1-poster.png"
                 preload="metadata"
               >
-                <source src="/assets/img-8366.mov" type="video/quicktime" />
+                <source src="/assets/baumansicht-1.mp4" type="video/mp4" />
               </video>
             </div>
 
