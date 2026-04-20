@@ -7,28 +7,34 @@ import Link from "next/link";
 
 const heroSlides = [
   {
+    image: "/assets/back-foto-1.webp",
+    alt: "Baumdienst Enbergs mit Fahrzeug und Technik im Einsatz",
     eyebrow: "Baumpflege",
-    title: "Reale Einsaetze statt Platzhalteroptik.",
+    title: "Baumpflege mit echtem Einsatzbild statt Platzhalteroptik.",
     copy:
-      "Das neue Hero-Motiv zeigt Fahrzeug, Zugang und Arbeitsrealitaet direkt im ersten Sichtbereich der Startseite.",
+      "Das Hero startet mit einem realen Motiv aus dem Einsatzalltag und zeigt Fahrzeug, Zugang und Arbeitsrealitaet direkt im ersten Sichtbereich.",
     facts: ["Vor-Ort-Eindruck", "Technik sichtbar", "Schneller Vertrauensaufbau"],
     objectPosition: "center 26%",
   },
   {
-    eyebrow: "Spezialfaellung",
-    title: "Zugang, Logistik und Sicherheit sofort im Blick.",
+    image: "/assets/raupe_slider-1.jpg",
+    alt: "Hebebuehne bei Arbeiten in der Baumkrone",
+    eyebrow: "Zugangstechnik",
+    title: "Hebebuehne, Reichweite und Kronenarbeit direkt im Fokus.",
     copy:
-      "Die Slide transportiert schneller, dass Enbergs nicht nur pflegt, sondern auch anspruchsvolle Lagen mit Maschinenpower loest.",
-    facts: ["Enge Zufahrten", "Sensible Flaechen", "Sauberer Ablauf"],
-    objectPosition: "center 40%",
+      "Das neue Slider-Motiv transportiert sofort, dass Enbergs nicht nur faellt, sondern auch kontrolliert in sensiblen und hoeheren Kronenbereichen arbeitet.",
+    facts: ["Hebebuehne", "Praeziser Zugang", "Kontrollierte Kronenpflege"],
+    objectPosition: "center center",
   },
   {
-    eyebrow: "Ruhrgebiet",
-    title: "Vom Privatgarten bis zur Gewerbeflaeche klar lesbar.",
+    image: "/assets/zange_slider-1.webp",
+    alt: "Greifzange und Saege bei einer Baumdemontage",
+    eyebrow: "Maschinenpower",
+    title: "Greifen, sichern und schneiden mit spuerbarer Maschinenpower.",
     copy:
-      "Bild, Aussagen und CTA arbeiten zusammen und fuehren Besucher direkter zur vorbereiteten Anfrage.",
-    facts: ["Bottrop", "Kirchhellen", "Castrop-Rauxel"],
-    objectPosition: "center 54%",
+      "Das dritte Slide zeigt die haertere Seite des Einsatzes und macht deutlicher, dass Enbergs auch technische Spezialfaelle und kraftvolle Demontagen sicher abwickelt.",
+    facts: ["Greiftechnik", "Spezialfaellung", "Saubere Demontage"],
+    objectPosition: "center center",
   },
 ] as const;
 
@@ -60,12 +66,12 @@ export function HeroSlide() {
             className={`hero-slide__item${index === activeIndex ? " is-active" : ""}`}
           >
             <Image
-              alt="Baumdienst Enbergs mit Fahrzeug und Technik im Einsatz"
+              alt={slide.alt}
               className="hero-slide__image"
               fill
               priority={index === 0}
               sizes="(max-width: 1040px) 100vw, 38vw"
-              src="/assets/back-foto-1.webp"
+              src={slide.image}
               style={{ objectPosition: slide.objectPosition }}
             />
             <div className="hero-slide__scrim" />

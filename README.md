@@ -29,6 +29,10 @@ Die Scripts `dev`, `build` und `start` synchronisieren automatisch die von Next 
 Server-Chunks aus `.next/server/chunks` nach `.next/server`, weil die lokale Runtime sonst
 vereinzelt fehlende Chunk-Dateien referenziert.
 
+## Roadmap
+
+- Weitere Projekt- und Ausbauideen stehen in `WEBSITE_ROADMAP.md`.
+
 ## Offene Punkte vor Go-live
 
 - Telefonnummern und E-Mail-Adressen aus der Bestandssite uebernehmen
