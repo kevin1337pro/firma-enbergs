@@ -117,7 +117,7 @@ export function SiteFooter() {
         <div className="stack-sm">
           <p className="eyebrow">Sponsornetz</p>
           <SponsorGrid compact />
-          <p className="footer-note">{company.contactNotice}</p>
+          <p className="footer-note"><a href="tel:+492045409440">Telefon: 02045 / 40 94 40</a></p>
           <div className="footer-links">
             <Link href="/impressum">Impressum</Link>
             <Link href="/datenschutz">Datenschutz</Link>

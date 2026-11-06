@@ -27,7 +27,7 @@ export const metadata: Metadata = {
     template: `%s | ${company.name}`,
   },
   description:
-    "Modernes Website-Grundgeruest fuer Baumdienst Enbergs mit Leistungen, Projekten, Maschinenpark, Karriere, Einsatzgebieten und Kontakt.",
+    "Baumpflege, Baumfällung und Spezialtechnik von Baumdienst Enbergs in Bottrop, Castrop-Rauxel und im Ruhrgebiet.",
 };
 
 export default function RootLayout({
