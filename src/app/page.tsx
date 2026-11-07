@@ -2,15 +2,16 @@ import Image from "next/image";
 import Link from "next/link";
 
 import { HeroSlide } from "@/components/hero-slide";
+import { ServiceIcon, type ServiceIconName } from "@/components/service-icon";
 import { siteUrl } from "@/data/site-content";
 
 import "./home.css";
 
-const services = [
-  { number: "01", title: "Baumpflege", description: "Für gesunde, sichere und gepflegte Bäume.", href: "/leistungen/baumpflege" },
-  { number: "02", title: "Baumfällung", description: "Durchdachte Lösungen, auch wenn es eng wird.", href: "/leistungen/baumfaellung" },
-  { number: "03", title: "Problem- & Gefahrbäume", description: "Sorgfältiges Vorgehen bei anspruchsvollen Bäumen.", href: "/leistungen/problembaum-gefahrbaum" },
-  { number: "04", title: "Seilklettertechnik", description: "Präzise Arbeit dort, wo Maschinen nicht hinkommen.", href: "/leistungen/seilklettertechnik" },
+const services: { number: string; title: string; description: string; href: string; icon: ServiceIconName }[] = [
+  { icon: "care", number: "01", title: "Baumpflege", description: "Für gesunde, sichere und gepflegte Bäume.", href: "/leistungen/baumpflege" },
+  { icon: "felling", number: "02", title: "Baumfällung", description: "Durchdachte Lösungen, auch wenn es eng wird.", href: "/leistungen/baumfaellung" },
+  { icon: "safety", number: "03", title: "Problem- & Gefahrbäume", description: "Sorgfältiges Vorgehen bei anspruchsvollen Bäumen.", href: "/leistungen/problembaum-gefahrbaum" },
+  { icon: "climbing", number: "04", title: "Seilklettertechnik", description: "Präzise Arbeit dort, wo Maschinen nicht hinkommen.", href: "/leistungen/seilklettertechnik" },
 ];
 
 export default function HomePage() {
@@ -53,7 +54,7 @@ export default function HomePage() {
       <section className="home-services home-wrap" id="leistungen">
         <div className="home-section-head"><div><p className="home-kicker">UNSERE LEISTUNGEN</p><h2>Arbeit mit<br /><em>Weitblick.</em></h2></div><Link className="home-text-link home-text-link--dark" href="/leistungen">Alle Leistungen ansehen <span aria-hidden="true">↗</span></Link></div>
         <div className="home-service-list">
-          {services.map((service) => <Link className="home-service" href={service.href} key={service.number}><span className="home-service__number">{service.number}</span><h3>{service.title}</h3><p>{service.description}</p><span className="home-service__arrow" aria-hidden="true">↗</span></Link>)}
+          {services.map((service) => <Link className="home-service" href={service.href} key={service.number}><span className="home-service__number">{service.number}</span><ServiceIcon name={service.icon} /><h3>{service.title}</h3><p>{service.description}</p><span className="home-service__arrow" aria-hidden="true">↗</span></Link>)}
         </div>
       </section>
 
