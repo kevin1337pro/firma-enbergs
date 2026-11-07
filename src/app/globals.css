@@ -1,4 +1,6 @@
 :root {
+  --font-display: "Barlow Condensed";
+  --font-body: "IBM Plex Sans";
   --bg: #ffffff;
   --bg-soft: #fff9ec;
   --surface: rgba(255, 255, 255, 0.96);

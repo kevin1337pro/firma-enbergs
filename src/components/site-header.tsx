@@ -1,232 +1,88 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-
-import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-
 import { mainNavigation } from "@/data/site-content";
-
-type TickerItem = {
-  label: string;
-  href?: string;
-  value?: string;
-};
-
-const tickerItems: TickerItem[] = [
-  {
-    label: "Baumpflege, Spezialfaellung und Maschinenpower im Ruhrgebiet",
-  },
-  {
-    label: "Notfall Kirchhellen",
-    href: "tel:+4920459639700",
-    value: "+49 (0) 20 45 96 3 97 00",
-  },
-  {
-    label: "Notfall Castrop",
-    href: "tel:+4923059298666",
-    value: "+49 (0) 23 05 92 9 86 66",
-  },
-];
+import "./site-header.css";
 
 function matchesPath(pathname: string, href: string) {
-  if (href === "/") {
-    return pathname === "/";
-  }
-
-  return pathname === href || pathname.startsWith(`${href}/`);
+  return href === "/" ? pathname === "/" : pathname === href || pathname.startsWith(`${href}/`);
+}
+function label(text: string) {
+  const labels: Record<string, string> = { "Ueber uns": "Über uns", "Baumfaellung": "Baumfällung", "Faellkran": "Fällkran", "Wurzelstockfraesen": "Wurzelstockfräsen", "Baeume": "Bäume" };
+  return labels[text] ?? text;
 }
 
 export function SiteHeader() {
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
   const [expandedItem, setExpandedItem] = useState<string | null>(null);
-  const menuRef = useRef<HTMLDivElement | null>(null);
-  const toggleRef = useRef<HTMLButtonElement | null>(null);
+  const headerRef = useRef<HTMLElement>(null);
+  const toggleRef = useRef<HTMLButtonElement>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    setMenuOpen(false);
-    setExpandedItem(null);
-  }, [pathname]);
-
+    document.body.classList.toggle("en-menu-open", menuOpen);
+    return () => document.body.classList.remove("en-menu-open");
+  }, [menuOpen]);
   useEffect(() => {
-    function closeNavigation() {
-      setMenuOpen(false);
-      setExpandedItem(null);
-    }
-
-    function handleKeydown(event: KeyboardEvent) {
+    function onKeyDown(event: KeyboardEvent) {
       if (event.key === "Escape") {
-        closeNavigation();
+        if (menuOpen) { setMenuOpen(false); setExpandedItem(null); toggleRef.current?.focus(); }
+        else {
+          const item = (document.activeElement as HTMLElement | null)?.closest(".en-desktop-nav__item");
+          item?.querySelector<HTMLButtonElement>(".en-desktop-nav__toggle")?.focus();
+          setExpandedItem(null);
+        }
+      }
+      if (event.key === "Tab" && menuOpen && panelRef.current) {
+        const items = [toggleRef.current, ...Array.from(panelRef.current.querySelectorAll<HTMLElement>('a[href], button:not([disabled])'))].filter((item): item is HTMLElement => !!item && item.getClientRects().length > 0);
+        const first = items[0], last = items[items.length - 1];
+        if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last?.focus(); }
+        else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first?.focus(); }
       }
     }
+    function onPointerDown(event: PointerEvent) { if (!headerRef.current?.contains(event.target as Node)) setExpandedItem(null); }
+    function onResize() { if (window.innerWidth > 1250) setMenuOpen(false); }
+    function onHistoryNavigation() { setMenuOpen(false); setExpandedItem(null); }
+    document.addEventListener("keydown", onKeyDown); document.addEventListener("pointerdown", onPointerDown); window.addEventListener("resize", onResize); window.addEventListener("popstate", onHistoryNavigation);
+    return () => { document.removeEventListener("keydown", onKeyDown); document.removeEventListener("pointerdown", onPointerDown); window.removeEventListener("resize", onResize); window.removeEventListener("popstate", onHistoryNavigation); };
+  }, [menuOpen]);
+  function closeNavigation() { setMenuOpen(false); setExpandedItem(null); }
 
-    function handlePointerDown(event: PointerEvent) {
-      const target = event.target as Node | null;
-
-      if (!target) {
-        return;
-      }
-
-      if (toggleRef.current?.contains(target) || menuRef.current?.contains(target)) {
-        return;
-      }
-
-      closeNavigation();
-    }
-
-    window.addEventListener("keydown", handleKeydown);
-    document.addEventListener("pointerdown", handlePointerDown);
-
-    return () => {
-      window.removeEventListener("keydown", handleKeydown);
-      document.removeEventListener("pointerdown", handlePointerDown);
-    };
-  }, []);
-
-  function closeNavigation() {
-    setMenuOpen(false);
-    setExpandedItem(null);
-  }
-
-  function toggleItem(label: string) {
-    setExpandedItem((current) => (current === label ? null : label));
-  }
-
-  return (
-    <header className={`site-header${menuOpen ? " is-menu-open" : ""}`}>
-      <div className="container site-header__inner">
-        <Link className="brand" href="/" onClick={closeNavigation}>
-          <Image
-            alt="Baumdienst Enbergs"
-            className="brand__image"
-            height={367}
-            priority
-            src="/assets/logo_baumdienst_enbergs.png"
-            width={300}
-          />
-        </Link>
-
-        <button
-          aria-controls="site-navigation"
-          aria-expanded={menuOpen}
-          className="nav-toggle"
-          ref={toggleRef}
-          onClick={() => setMenuOpen((current) => !current)}
-          type="button"
-        >
-          <span className="nav-toggle__icon" aria-hidden="true">
-            <span />
-            <span />
-            <span />
-          </span>
-          <span className="nav-toggle__label">{menuOpen ? "Schliessen" : "Menue"}</span>
-        </button>
-
-        <div className={`site-header__main${menuOpen ? " is-open" : ""}`} ref={menuRef}>
-          <nav className="site-nav" aria-label="Hauptnavigation" id="site-navigation">
-            {mainNavigation.map((item) => {
-              const isExpanded = expandedItem === item.label;
-              const isActive =
-                matchesPath(pathname, item.href) ||
-                item.children?.some((child) => matchesPath(pathname, child.href));
-
-              if (!item.children) {
-                return (
-                  <Link
-                    key={item.href}
-                    className={`site-nav__link site-nav__link--solo${isActive ? " is-active" : ""}`}
-                    href={item.href}
-                    onClick={closeNavigation}
-                  >
-                    {item.label}
-                  </Link>
-                );
-              }
-
-              return (
-                <div
-                  key={item.href}
-                  className={`site-nav__item${isExpanded ? " is-expanded" : ""}`}
-                >
-                  <div className="site-nav__item-head">
-                    <Link
-                      className={`site-nav__link${isActive ? " is-active" : ""}`}
-                      href={item.href}
-                      onClick={closeNavigation}
-                    >
-                      {item.label}
-                    </Link>
-                    <button
-                      aria-expanded={isExpanded}
-                      className="site-nav__toggle"
-                      onClick={() => toggleItem(item.label)}
-                      type="button"
-                    >
-                      <span className="site-nav__toggle-mark" aria-hidden="true">
-                        ▾
-                      </span>
-                      <span className="sr-only">{item.label} aufklappen</span>
-                    </button>
-                  </div>
-
-                  <div className="site-subnav">
-                    {item.children.map((child) => (
-                      <Link
-                        key={child.href}
-                        className={`site-subnav__link${matchesPath(pathname, child.href) ? " is-active" : ""}`}
-                        href={child.href}
-                        onClick={closeNavigation}
-                      >
-                        <span className="site-subnav__title">{child.label}</span>
-                        {child.description ? (
-                          <span className="site-subnav__description">{child.description}</span>
-                        ) : null}
-                      </Link>
-                    ))}
-                  </div>
-                </div>
-              );
-            })}
-          </nav>
-
-          <div className="site-ticker" aria-label="Unternehmenshinweis">
-            <div className="site-ticker__track">
-              {[...tickerItems, ...tickerItems].map((item, index) => (
-                <span aria-hidden={index >= tickerItems.length} key={`${item.label}-${index}`}>
-                  {item.href ? (
-                    <>
-                      <strong>{item.label}:</strong>{" "}
-                      <a className="site-ticker__link" href={item.href}>
-                        {item.value}
-                      </a>
-                    </>
-                  ) : (
-                    item.label
-                  )}
-                </span>
-              ))}
-            </div>
-          </div>
-
-          <Link
-            className="button button--small site-header__cta site-header__cta--panel"
-            href="/anfrage-vorbereiten"
-            onClick={closeNavigation}
-          >
-            Anfrage vorbereiten
-          </Link>
-        </div>
-
-        <Link
-          className="button button--small site-header__cta"
-          href="/anfrage-vorbereiten"
-          onClick={closeNavigation}
-        >
-          Anfrage
-        </Link>
+  return <header className={`en-header${menuOpen ? " is-open" : ""}`} ref={headerRef}>
+    <div className="en-header__inner">
+      <Link className="en-brand" href="/" onClick={closeNavigation} aria-label="Enbergs Baumdienst – zur Startseite">
+        <span className="en-brand__mark" aria-hidden="true"><svg viewBox="0 0 40 40" fill="none"><path d="M20 34V12M20 26l-7-6M20 22l7-6M20 18l-4-4" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round"/><path d="M20 4C11.6 4 6 10.7 6 18.1c0 7.1 5.9 12.6 14 12.6s14-5.5 14-12.6C34 10.7 28.4 4 20 4Z" stroke="currentColor" strokeWidth="1.5"/></svg></span>
+        <span className="en-brand__text"><strong>ENBERGS</strong><small>BAUMDIENST</small></span>
+      </Link>
+      <nav className="en-desktop-nav" aria-label="Hauptnavigation">
+        {mainNavigation.map(item => {
+          const active = matchesPath(pathname, item.href), expanded = expandedItem === item.label;
+          return <div className="en-desktop-nav__item" key={item.href}>
+            <Link className={active ? "is-active" : ""} href={item.href} onClick={closeNavigation} aria-current={active ? "page" : undefined}>{label(item.label)}</Link>
+            {item.children && <><button className="en-desktop-nav__toggle" type="button" aria-expanded={expanded} aria-label={`${label(item.label)} Untermenü ${expanded ? "schließen" : "öffnen"}`} onClick={() => setExpandedItem(expanded ? null : item.label)}><span aria-hidden="true">⌄</span></button><div className="en-desktop-nav__dropdown" hidden={!expanded}><span className="en-desktop-nav__eyebrow">Entdecken</span>{item.children.map(child => <Link key={child.href} href={child.href} onClick={closeNavigation}><span>{label(child.label)}</span><span aria-hidden="true">↗</span></Link>)}</div></>}
+          </div>;
+        })}
+      </nav>
+      <Link className="en-header__contact" href="/anfrage-vorbereiten" onClick={closeNavigation}><span>Anfrage stellen</span><span aria-hidden="true">↗</span></Link>
+      <button className="en-menu-toggle" ref={toggleRef} type="button" aria-expanded={menuOpen} aria-controls="en-mobile-menu" aria-label={menuOpen ? "Menü schließen" : "Menü öffnen"} onClick={() => { setMenuOpen(!menuOpen); setExpandedItem(null); }}><span className="en-menu-toggle__label">{menuOpen ? "Schließen" : "Menü"}</span><span className="en-menu-toggle__icon" aria-hidden="true"><i/><i/></span></button>
+    </div>
+    <div className="en-mobile-menu" id="en-mobile-menu" ref={panelRef} inert={!menuOpen}>
+      <div className="en-mobile-menu__inner">
+        <div className="en-mobile-menu__eyebrow">Navigation <span>Enbergs Baumdienst</span></div>
+        <nav className="en-mobile-menu__links" aria-label="Mobile Navigation">
+          {mainNavigation.map((item, index) => {
+            const expanded = expandedItem === item.label;
+            return <div className="en-mobile-menu__item" key={item.href} style={{"--item-index": index} as React.CSSProperties}>
+              <div className="en-mobile-menu__row"><span className="en-mobile-menu__number">{String(index + 1).padStart(2, "0")}</span><Link href={item.href} onClick={closeNavigation}>{label(item.label)}</Link>{item.children ? <button type="button" onClick={() => setExpandedItem(expanded ? null : item.label)} aria-expanded={expanded} aria-label={`${label(item.label)} Untermenü ${expanded ? "schließen" : "öffnen"}`}><span aria-hidden="true">{expanded ? "−" : "+"}</span></button> : <span className="en-mobile-menu__arrow" aria-hidden="true">↗</span>}</div>
+              {item.children && <div className="en-mobile-menu__subnav" hidden={!expanded}>{item.children.map(child => <Link key={child.href} href={child.href} onClick={closeNavigation}>{label(child.label)} <span aria-hidden="true">↗</span></Link>)}</div>}
+            </div>;
+          })}
+        </nav>
+        <div className="en-mobile-menu__footer"><div><span>Persönlich für Sie da</span><Link href="/kontakt" onClick={closeNavigation}>Kontakt aufnehmen ↗</Link></div><p>Baumpflege mit<br/>Weitblick.</p></div>
       </div>
-    </header>
-  );
+    </div>
+  </header>;
 }

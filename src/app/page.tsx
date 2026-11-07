@@ -1,317 +1,73 @@
+import Image from "next/image";
 import Link from "next/link";
 
-import { ContactForm } from "@/components/contact-form";
 import { HeroSlide } from "@/components/hero-slide";
-import { SectionHeading } from "@/components/section-heading";
-import { SponsorGrid } from "@/components/sponsor-grid";
-import {
-  audiences,
-  company,
-  homeFaqs,
-  locations,
-  machines,
-  processItems,
-  projectPlaceholders,
-  reasons,
-  regions,
-  services,
-  siteUrl,
-} from "@/data/site-content";
+import { ServiceIcon, type ServiceIconName } from "@/components/service-icon";
+import { siteUrl } from "@/data/site-content";
 
-const featuredServices = services.slice(0, 6);
+import "./home.css";
+
+const services: { number: string; title: string; description: string; href: string; icon: ServiceIconName }[] = [
+  { icon: "care", number: "01", title: "Baumpflege", description: "Für gesunde, sichere und gepflegte Bäume.", href: "/leistungen/baumpflege" },
+  { icon: "felling", number: "02", title: "Baumfällung", description: "Durchdachte Lösungen, auch wenn es eng wird.", href: "/leistungen/baumfaellung" },
+  { icon: "safety", number: "03", title: "Problem- & Gefahrbäume", description: "Sorgfältiges Vorgehen bei anspruchsvollen Bäumen.", href: "/leistungen/problembaum-gefahrbaum" },
+  { icon: "climbing", number: "04", title: "Seilklettertechnik", description: "Präzise Arbeit dort, wo Maschinen nicht hinkommen.", href: "/leistungen/seilklettertechnik" },
+];
 
 export default function HomePage() {
   const localBusinessJsonLd = {
     "@context": "https://schema.org",
     "@type": "LocalBusiness",
-    name: company.name,
-    areaServed: ["Bottrop", "Bottrop-Kirchhellen", "Castrop-Rauxel", "Ruhrgebiet"],
-    description: company.subline,
+    name: "Baumdienst Enbergs GmbH",
+    areaServed: ["Bottrop", "Castrop-Rauxel", "Ruhrgebiet"],
     url: siteUrl,
-    address: locations.map((location) => ({
-      "@type": "PostalAddress",
-      streetAddress: location.address,
-      addressLocality: location.city,
-      addressCountry: "DE",
-    })),
+    telephone: "+49 2045 409440",
   };
 
   return (
-    <>
-      <section className="section hero">
-        <div className="container hero__grid">
-          <div className="stack-lg">
-            <p className="eyebrow">Baumdienst, Spezialfaellung und Pflege</p>
-            <h1 className="hero__title">{company.headline}</h1>
-            <p className="hero__copy">{company.subline}</p>
-            <p className="hero__region">{company.regionLine}</p>
-            <div className="hero-points">
-              <span>Vor-Ort-Beratung</span>
-              <span>Spezialtechnik fuer enge und sensible Lagen</span>
-              <span>Fachgerechte Ausfuehrung von Pflege bis Rodung</span>
-            </div>
-
-            <div className="button-row">
-              <Link className="button" href="/anfrage-vorbereiten">
-                {company.primaryCta}
-              </Link>
-              <Link className="button button--ghost" href="/leistungen">
-                {company.secondaryCta}
-              </Link>
-            </div>
-
-            <div className="stats-grid">
-              {company.stats.map((stat) => (
-                <div key={stat.label} className="stat-card">
-                  <strong>{stat.value}</strong>
-                  <span>{stat.label}</span>
-                </div>
-              ))}
+    <div className="home">
+      <section className="home-hero" aria-labelledby="home-title">
+        <div className="home-hero__intro">
+          <div className="home-hero__topline"><span className="home-dot" /> BAUMDIENST ENBERGS <span> / </span> IM RUHRGEBIET</div>
+          <div className="home-hero__text">
+            <p className="home-kicker">Mit Erfahrung. Mit Weitblick.</p>
+            <h1 id="home-title">Für Bäume.<br /><em>Für morgen.</em></h1>
+            <p className="home-hero__lead">Baumpflege, Baumfällung und Spezialtechnik im Ruhrgebiet. Von der Beratung vor Ort bis zum Einsatz in der Krone.</p>
+            <div className="home-actions">
+              <a className="home-button" href="tel:+492045409440">Jetzt anrufen <span aria-hidden="true">↗</span></a>
+              <Link className="home-text-link" href="/leistungen">Leistungen entdecken <span aria-hidden="true">↗</span></Link>
             </div>
           </div>
+          <div className="home-hero__bottom"><span>BOTTROP · CASTROP-RAUXEL</span><span>SCROLLEN &nbsp; ↓</span></div>
+        </div>
+        <div className="home-hero__visual"><HeroSlide /></div>
+      </section>
 
-          <HeroSlide />
+      <section className="home-intro home-wrap">
+        <div className="home-label"><span>01 / WAS WIR TUN</span><span className="home-label__line" /></div>
+        <div className="home-intro__content">
+          <h2>Jeder Baum ist anders.<br /><em>Unser Einsatz auch.</em></h2>
+          <p>Ob Pflege, Rückschnitt oder Fällung: Wir finden den passenden Weg für Ihren Baum und seine Umgebung. Mit Blick fürs Detail und der richtigen Technik.</p>
         </div>
       </section>
 
-      <section className="section section--tight">
-        <div className="container stack-lg">
-          <SectionHeading
-            eyebrow="Sponsornetz"
-            title="Zertifikate und Partner sind jetzt als sichtbares Vertrauensmodul angelegt."
-            body="Statt als unauffaellige Footer-Liste stehen die Nachweise ab sofort als eigenes Raster im Seitenfluss."
-          />
-          <SponsorGrid />
+      <section className="home-services home-wrap" id="leistungen">
+        <div className="home-section-head"><div><p className="home-kicker">UNSERE LEISTUNGEN</p><h2>Arbeit mit<br /><em>Weitblick.</em></h2></div><Link className="home-text-link home-text-link--dark" href="/leistungen">Alle Leistungen ansehen <span aria-hidden="true">↗</span></Link></div>
+        <div className="home-service-list">
+          {services.map((service) => <Link className="home-service" href={service.href} key={service.number}><span className="home-service__number">{service.number}</span><ServiceIcon name={service.icon} /><h3>{service.title}</h3><p>{service.description}</p><span className="home-service__arrow" aria-hidden="true">↗</span></Link>)}
         </div>
       </section>
 
-      <section className="section">
-        <div className="container">
-          <SectionHeading
-            eyebrow="Leistungen"
-            title="Die neuen Kernleistungen sind bereits als eigene SEO-faehige Seiten vorbereitet."
-            body="Die Projektinitialisierung folgt der empfohlenen Struktur aus dem Briefing: einzeln ausbaubare Leistungen statt einer langen Sammelseite."
-          />
-
-          <div className="card-grid card-grid--services">
-            {featuredServices.map((service) => (
-              <article key={service.slug} className="card service-card">
-                <p className="eyebrow">{service.shortTitle}</p>
-                <h3>{service.title}</h3>
-                <p>{service.summary}</p>
-                <div className="chip-row">
-                  {service.highlights.map((highlight) => (
-                    <span key={highlight} className="chip">
-                      {highlight}
-                    </span>
-                  ))}
-                </div>
-                <Link href={`/leistungen/${service.slug}`}>Zur Leistungsseite</Link>
-              </article>
-            ))}
-          </div>
-        </div>
+      <section className="home-story" id="einblicke">
+        <div className="home-story__image"><Image src="/assets/einsatz-03.jpg" alt="Fahrzeug von Baumdienst Enbergs bei einem Einsatz" fill sizes="(max-width: 800px) 100vw, 50vw" /></div>
+        <div className="home-story__content"><p className="home-kicker">EINBLICK IN UNSERE ARBEIT</p><h2>Am Boden verwurzelt.<br /><em>In der Höhe zuhause.</em></h2><p>Jeder Einsatz stellt eigene Anforderungen. Mit passender Technik und einem sorgfältigen Blick für die Umgebung gehen wir Ihre Aufgabe an.</p><Link className="home-button home-button--light" href="/ueber-uns">Mehr über Enbergs <span aria-hidden="true">↗</span></Link></div>
       </section>
 
-      <section className="section">
-        <div className="container split-layout">
-          <div>
-            <SectionHeading
-              eyebrow="Warum Enbergs"
-              title="Die neue Startseite verkauft Fachlichkeit ueber Ergebnisse, Technik und Vertrauen."
-              body="Das ersetzt die alte, rein informative Wirkung durch klare Nutzerwege und sichtbare Vorteile."
-            />
-          </div>
-          <div className="stack">
-            {reasons.map((reason) => (
-              <article key={reason.title} className="card card--accent">
-                <h3>{reason.title}</h3>
-                <p>{reason.text}</p>
-              </article>
-            ))}
-          </div>
-        </div>
+      <section className="home-contact home-wrap" id="kontakt">
+        <div><p className="home-kicker">IHR VORHABEN IST BEI UNS IN GUTEN HÄNDEN</p><h2>Sie haben<br /><em>etwas vor?</em></h2></div>
+        <div className="home-contact__details"><p>Erzählen Sie uns von Ihrem Anliegen. Wir freuen uns darauf, von Ihnen zu hören.</p><a href="tel:+492045409440">02045 / 40 94 40 <span aria-hidden="true">↗</span></a><span>Bottrop-Kirchhellen · Castrop-Rauxel</span><Link className="home-text-link home-text-link--dark" href="/kontakt">Weitere Kontaktmöglichkeiten <span aria-hidden="true">↗</span></Link></div>
       </section>
-
-      <section className="section">
-        <div className="container split-layout">
-          <div>
-            <SectionHeading
-              eyebrow="Zielgruppen"
-              title="Die Seite spricht nicht nur Privatkunden, sondern das gesamte reale Auftragsspektrum an."
-              body="Das Briefing nennt Verwaltung, Kommune, Gewerbe und Bautraeger. Diese Zielgruppen sind jetzt direkt in der Startseite verankert."
-            />
-          </div>
-          <div className="card-grid card-grid--compact">
-            {audiences.map((audience) => (
-              <article key={audience.title} className="card">
-                <p className="eyebrow">Auftraggeber</p>
-                <h3>{audience.title}</h3>
-                <p>{audience.text}</p>
-              </article>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="section">
-        <div className="container">
-          <SectionHeading
-            eyebrow="Maschinenpark"
-            title="Technik wird als Verkaufsargument inszeniert - nicht nur als Galerie."
-            body="Jedes Geraet ist mit Einsatzbereich, Kundenvorteil und anschlussfaehiger Projekterzaehlung angelegt."
-          />
-
-          <div className="card-grid">
-            {machines.map((machine) => (
-              <article key={machine.name} className="card">
-                <p className="eyebrow">Technik</p>
-                <h3>{machine.name}</h3>
-                <p>{machine.purpose}</p>
-                <p className="card-highlight">{machine.benefit}</p>
-                <ul className="list">
-                  {machine.specs.map((spec) => (
-                    <li key={spec}>{spec}</li>
-                  ))}
-                </ul>
-              </article>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="section">
-        <div className="container">
-          <SectionHeading
-            eyebrow="Ablauf"
-            title="Vom ersten Kontakt bis zur sauberen Uebergabe ist der Nutzerweg klar aufgebaut."
-            body="Das macht die Seite vertriebsstaerker als eine reine Aufzaehlung von Leistungen und Maschinen."
-          />
-
-          <div className="timeline-grid">
-            {processItems.map((item, index) => (
-              <article key={item.title} className="timeline-card">
-                <span className="timeline-card__index">0{index + 1}</span>
-                <h3>{item.title}</h3>
-                <p>{item.text}</p>
-              </article>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="section">
-        <div className="container">
-          <SectionHeading
-            eyebrow="Referenzstruktur"
-            title="Projektkarten sind vorbereitet und deutlich als Platzhalter markiert."
-            body="So steht das Seitenmuster bereits, ohne spaeter unbeabsichtigt mit erfundenen Referenzen live zu gehen."
-          />
-
-          <div className="card-grid">
-            {projectPlaceholders.map((project) => (
-              <article key={project.title} className="card">
-                <p className="eyebrow">{project.location}</p>
-                <h3>{project.title}</h3>
-                <p>{project.challenge}</p>
-                <p>
-                  <strong>Loesung:</strong> {project.solution}
-                </p>
-                <p>
-                  <strong>Ergebnis:</strong> {project.result}
-                </p>
-                <p className="card-note">{project.note}</p>
-              </article>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="section">
-        <div className="container split-layout">
-          <div>
-            <SectionHeading
-              eyebrow="Einsatzgebiete"
-              title="Lokale Sichtbarkeit ist als eigener Seitentyp angelegt."
-              body="Bottrop, Bottrop-Kirchhellen, Castrop-Rauxel und Ruhrgebiet sind als ausbaubare Landingpages vorbereitet."
-            />
-            <Link className="button button--ghost" href="/einsatzgebiete">
-              Alle Einsatzgebiete
-            </Link>
-          </div>
-
-          <div className="card-grid card-grid--compact">
-            {regions.map((region) => (
-              <article key={region.slug} className="card">
-                <p className="eyebrow">Region</p>
-                <h3>{region.name}</h3>
-                <p>{region.intro}</p>
-                <Link href={`/einsatzgebiete/${region.slug}`}>Landingpage oeffnen</Link>
-              </article>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="section">
-        <div className="container split-layout">
-          <div>
-            <SectionHeading
-              eyebrow="FAQ"
-              title="Wichtige Rueckfragen werden schon auf der Startseite beantwortet."
-              body="Das hilft sowohl mobil als auch fuer Suchintentionen, bevor Besucher tiefer in Leistungsseiten einsteigen."
-            />
-          </div>
-          <div className="faq-list">
-            {homeFaqs.map((faq) => (
-              <article key={faq.question} className="card">
-                <h3>{faq.question}</h3>
-                <p>{faq.answer}</p>
-              </article>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="section section--contrast" id="anfrage">
-        <div className="container contact-section">
-          <div className="stack-lg">
-            <SectionHeading
-              eyebrow="Kontaktabschluss"
-              title="Die neue Anfragefuehrung ist direkt im Projektgrundgeruest verankert."
-              body={company.requestPromise}
-            />
-
-            <div className="card-grid card-grid--compact">
-              {locations.map((location) => (
-                <article key={location.title} className="card">
-                  <p className="eyebrow">{location.title}</p>
-                  <h3>
-                    {location.address}
-                    <br />
-                    {location.city}
-                  </h3>
-                  <p>{location.note}</p>
-                </article>
-              ))}
-            </div>
-
-            <div className="notice-card">
-              <strong>Wichtiger Hinweis fuer den naechsten Schritt</strong>
-              <p>{company.contactNotice}</p>
-            </div>
-          </div>
-
-          <ContactForm sourcePage="startseite" />
-        </div>
-      </section>
-
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify(localBusinessJsonLd),
-        }}
-      />
-    </>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessJsonLd) }} />
+    </div>
   );
 }
